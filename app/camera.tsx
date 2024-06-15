@@ -54,7 +54,7 @@ const trashesInfo = [
       "Bread and cereal leftovers",
     ],
     bg: "#385DDE4D",
-    imageSource: require("../assets/images/trash/purple.png"),
+    imageSource: require("../assets/images/trash/blue.png"),
   },
   {
     color: "BIO",
@@ -201,7 +201,7 @@ function CameraPage() {
           <View style={styles.header}>
             <TouchableOpacity
               style={styles.circle}
-              onPress={() => router.push("/")}
+              onPress={() => router.push("/game")}
             >
               <ArrowIcon />
             </TouchableOpacity>
@@ -212,9 +212,18 @@ function CameraPage() {
           <View
             style={[
               styles.transparentContainer,
-              isGameStarted && styles.gameStarted,
+              status && styles.gameStarted,
             ]}
           >
+            { isGameStarted && !status && imageUrl && <Image 
+              source={{ uri: `data:image/png;base64,${imageUrl}` }}
+              style={{
+                borderRadius: 20,
+                position: "absolute",
+                width: "100%",
+                height: "100%"
+              }}
+            />}
             {isGameStarted ? (
               isLoading ? (
                 <ActivityIndicator size="large" />
@@ -402,15 +411,14 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "60%",
     justifyContent: "center",
-    alignItems: "center",
-    borderRadius: 20,
+    alignItems: "center", 
     opacity: 1,
-  },
-  gameStarted: {
-    backgroundColor: "transparent",
     borderRadius: 30,
     borderColor: "green",
     borderWidth: 10,
+  },
+  gameStarted: {
+    backgroundColor: "#fff",
   },
   resultContainer: {
     flexDirection: "column",
