@@ -3,8 +3,8 @@ import { useColorScheme } from '@/hooks/useColorScheme';
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
 import { TouchableOpacity, StyleSheet, Image } from 'react-native';
 
-import ExplorePage from "./explore";
-import HomePage from "./home";
+import GamePage from "./game";
+import MartkeplacePage from "./martketplace";
 import { GameIcon } from '@/components/icons/game';
 import { AchievementIcon } from '@/components/icons/achivement';
 import { CameraIcon } from '@/components/icons/camera';
@@ -15,11 +15,11 @@ const TabNavigator = () => {
 
   const _renderIcon = (routeName: string, selectedTab: any) => {
     switch (routeName) {
-      case "Home":
+      case "Game":
         return (
           <GameIcon isActive={selectedTab === routeName} />
         );
-      case "WalletStack":
+      case "Marketplace":
         return (
           <AchievementIcon isActive={selectedTab===routeName
           }/>
@@ -51,7 +51,7 @@ const TabNavigator = () => {
 
   return(
     <CurvedBottomBarExpo.Navigator
-      initialRouteName="Home"
+      initialRouteName="Marketplace"
       screenOptions={{
         headerShown: false,
         tabBarItemStyle: {
@@ -76,14 +76,14 @@ const TabNavigator = () => {
       )}
     >
       <CurvedBottomBarExpo.Screen
-        name="Home"
+        name="Marketplace"
         position="LEFT"
-        component={HomePage}
+        component={MartkeplacePage}
       />
       <CurvedBottomBarExpo.Screen
-        name="WalletStack"
+        name="Game"
         position="RIGHT"
-        component={ExplorePage}
+        component={GamePage}
       />
     </CurvedBottomBarExpo.Navigator>
   );

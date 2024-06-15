@@ -145,7 +145,7 @@ function CameraPage() {
       <CameraView style={styles.camera} facing={facing} ref={cameraRef} pictureSize="640x480">
         <View style={styles.overlayContainer}>
           <View style={styles.header}>
-            <TouchableOpacity style={styles.circle} onPress={() => router.back()}>
+            <TouchableOpacity style={styles.circle} onPress={() => router.push("/")}>
               <ArrowIcon />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setShowInfo(true)}>
@@ -159,21 +159,23 @@ function CameraPage() {
               ) : status ? status === "success" ? (
                 <View style={styles.resultContainer}>
                   <Image source={require("../assets/images/success.png")} alt="success" style={styles.resultImage} />
-                  <Text>10+ points 🥳</Text>
-                  <Text>{message}</Text>
+                  <View style={{ flexDirection: "column", alignSelf: "center", justifyContent: "flex-start", flex: 1 }}>
+                    <Text style={{ fontSize: 32, fontWeight: "bold", textAlign: "center"}}>10+ points 🥳</Text>
+                  <Text style={{ fontSize: 32, fontWeight: "bold", textAlign: "center"}}>{message}</Text>
+                  </View>
                 </View>
               ) : (
                 <View style={styles.failedContainer}>
                   <Image source={require("../assets/images/failed.png")} alt="failed" style={styles.failedImage} />
-                  <Text>{message}</Text>
+                  <Text style={{ fontSize: 32, fontWeight: "bold", textAlign: "center"}}>{message}</Text>
                 </View>
               ): null
             ) : null}
           </View>
           <View style={isGameStarted ? styles.gameContainer : styles.buttonContainer}>
             {isGameStarted ? (
-              choosenTrash !== null ? status !== null ?(<TouchableOpacity style={styles.trashImageContainer} onPress={resetFunc}>
-              <Text>Take the next photo</Text>
+              choosenTrash !== null ? status !== null ?(<TouchableOpacity style={[styles.trashImageContainer, styles.button]} onPress={resetFunc}>
+              <Text style={{color: "#fff", fontSize: 20}}>Take the next photo</Text>
             </TouchableOpacity>) :(
                 <TouchableOpacity style={styles.trashImageContainer} onPress={() => setIsLoading(true)}>
                   <Image source={trashesInfo[choosenTrash].imageSource} alt={trashesInfo[choosenTrash].title} style={styles.trashImage} />
@@ -190,9 +192,9 @@ function CameraPage() {
             ) : (
               <View style={styles.actionButtonsContainer}>
                 <TouchableOpacity style={styles.button} onPress={shootPhoto}>
-                  <Text style={styles.text}>Take a photo</Text>
+                 <Text style={styles.text}>Take a photo</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+                <TouchableOpacity style={[styles.button, { marginLeft: 5}]} onPress={toggleCameraFacing}>
                   <Text style={styles.text}>Flip Camera</Text>
                 </TouchableOpacity>
               </View>
@@ -267,16 +269,18 @@ const styles = StyleSheet.create({
     height: "60%",
     justifyContent: "center",
     alignItems: "center",
-    borderRadius: 12,
+    borderRadius: 20,
     opacity: 1,
   },
   gameStarted: {
     backgroundColor: "#fff",
+    borderRadius: 20
   },
   resultContainer: {
     flexDirection: "column",
     justifyContent: "space-between",
     alignItems: "center",
+    borderRadius: 20,
     width: "100%",
     height: "100%",
     padding: 10,
@@ -291,6 +295,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     width: "100%",
     height: "100%",
+    borderRadius: 20,
     padding: 10,
   },
   failedImage: {
@@ -311,12 +316,21 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   actionButtonsContainer: {
+    paddingHorizontal: 5,
     flexDirection: "row",
+    maxWidth: "100%",
+    justifyContent: "space-between"
   },
   button: {
     flex: 1,
     alignSelf: "flex-end",
     alignItems: "center",
+    backgroundColor: "green",
+    justifyContent: "center",
+    color: "white",
+    maxWidth: "100%",
+    borderRadius: 20,
+    height: 50
   },
   text: {
     fontSize: 24,
@@ -335,6 +349,7 @@ const styles = StyleSheet.create({
   trashImageContainer: {
     marginLeft: "auto",
     marginRight: "auto",
+    marginBottom: 10
   },
   trashScrollView: {
     maxWidth: "100%",
