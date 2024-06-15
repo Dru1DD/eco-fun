@@ -1,17 +1,68 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { SafeAreaView, ScrollView, Image, StatusBar } from "react-native";
-import { useState } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { SafeAreaView, ScrollView, Image, StatusBar, ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, Button } from "react-native";
+import { useRef, useState } from "react";
 import { useRouter } from "expo-router";
 import ArrowIcon from "@/components/icons/arrow";
 import InfoIcon from "@/components/icons/info";
 import TrashInfo from "@/components/trash-info";
+import { Buffer } from "buffer";
+
+
+import { DefaultApi } from "@/api";
+
+const api = new DefaultApi();
+
+const trashesInfo = [
+  {
+    bg: "#F3EA004D",
+    color: "METAL_PLASTIC",
+    title: "Plastics & Metal",
+    description: ["Plastic bottles", "Metal beverage and food cans", "Plastic food containers"],
+    imageSource: require("../assets/images/trash/orange.png"),
+  },
+  {
+    color: "GLASS",
+    title: "Glass",
+    description: ["Glass bottles and jars", "Broken glass items", "Glass cosmetic bottles"],
+    bg: "#3E8F024D",
+    imageSource: require("../assets/images/trash/green.png"),
+  },
+  {
+    color: "PAPER",
+    title: "Paper and Cardboard",
+    description: ["Vegetable and fruit scraps", "Coffee grounds and tea bags", "Bread and cereal leftovers"],
+    bg: "#385DDE4D",
+    imageSource: require("../assets/images/trash/purple.png"),
+  },
+  {
+    color: "BIO",
+    title: "Organic Waste",
+    description: ["Vegetable and fruit scraps", "Coffee grounds and tea bags", "Bread and cereal leftovers"],
+    bg: "#8146004D",
+    imageSource: require("../assets/images/trash/red.png"),
+  },
+  {
+    color: "MIXED",
+    title: "Other waste",
+    description: [],
+    bg: "#5C5C5C4D",
+    imageSource: require("../assets/images/trash/grey.png"),
+  },
+];
 
 function CameraPage() {
   const router = useRouter();
-  const [showInfo, setShowInfo] = useState<boolean>(true);
-  const [facing, setFacing] = useState("true");
+  const [showInfo, setShowInfo] = useState(true);
+  const [facing, setFacing] = useState("back");
   const [permission, requestPermission] = useCameraPermissions();
+  const [imageUrl, setImageUrl] = useState("");
+  const [isGameStarted, setIsGameStarted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [choosenTrash, setChoosenTrash] = useState<any>(null);
+  const [status, setStatus] = useState<any>(null);
+  const [message, setMessage] = useState("");
+
+  const cameraRef = useRef();
 
   if (!permission) {
     return <View />;
@@ -20,124 +71,130 @@ function CameraPage() {
   if (!permission.granted) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={{ textAlign: "center" }}>
-          We need your permission to show the camera
-        </Text>
+        <Text style={styles.permissionText}>We need your permission to show the camera</Text>
         <Button onPress={requestPermission} title="grant permission" />
       </SafeAreaView>
     );
   }
 
-  function toggleCameraFacing() {
+  const toggleCameraFacing = () => {
     setFacing((current) => (current === "back" ? "front" : "back"));
+  };
+
+  const shootPhoto = async () => {
+    if (!cameraRef.current) return null;
+    try {
+      const result = await cameraRef.current.takePictureAsync({ base64: true, quality: 0 });
+      if (!result) throw new Error("Something went wrong");
+      setImageUrl(result.base64);
+      setIsGameStarted(true);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const sendDataToBackend = async (index: number) => {
+    try {
+      setIsLoading(true);
+      setChoosenTrash(index);
+      let imageBytes = Buffer.from(imageUrl, "base64");
+      const result = await api.verifyPhotoVerifyPost("asdsadas", trashesInfo[index].color as any, imageBytes).catch(e => console.log("Error", e.message));
+
+      // if(!result) throw new Error("Something went wrong");
+
+      console.log("Result", result);
+      setStatus(result.data.payload.isBinTypeGuessCorrect ? "success" : "failed");
+      setMessage(result.data.payload.notesFromAI);
+      setIsLoading(false);
+    } catch (e) {
+      console.log(e);
+    }
   }
 
   if (showInfo) {
     return (
       <SafeAreaView style={styles.container}>
         <StatusBar />
-        <ScrollView
-          style={{ flex: 1, backgroundColor: "white", paddingTop: 100 }}
-        >
-          <Text style={{ textAlign: "center", fontSize: 24 }}>
-            Instructions
-          </Text>
-          <TrashInfo
-            color="#F3EA004D"
-            iconUrl={require("../assets/images/trash/orange.png")}
-            title="Plastics &Metal"
-            description={[
-              "Plastic bottles",
-              "Metal beverage and food cans",
-              "Plastic food containers",
-            ]}
-          />
-          <TrashInfo
-            color="#3E8F024D"
-            iconUrl={require("../assets/images/trash/green.png")}
-            title="Glass"
-            description={[
-              "Glass bottles and jars",
-              "Broken glass items",
-              "Glass cosmetic bottles",
-            ]}
-          />
-          <TrashInfo
-            color="#385DDE4D"
-            iconUrl={require("../assets/images/trash/purple.png")}
-            title="Paper and Cardboard"
-            description={[
-              "Newspapers and magazines",
-              "Paper bags",
-              "Office paper and drafts",
-            ]}
-          />
-          <TrashInfo
-            color="#8146004D"
-            iconUrl={require("../assets/images/trash/red.png")}
-            title="Organic Waste"
-            description={[
-              "Vegetable and fruit scraps",
-              "Coffee grounds and tea bags",
-              "Bread and cereal leftovers",
-            ]}
-          />
-          <TrashInfo
-            color="#5C5C5C4D"
-            iconUrl={require("../assets/images/trash/grey.png")}
-            title="Other waste"
-            description={[]}
-          />
-          <TouchableOpacity
-            onPress={() => setShowInfo(false)}
-            style={{
-              width: "80%",
-              backgroundColor: "#347503",
-              borderRadius: 20,
-              borderWidth: 1,
-              borderColor: "#fff",
-              height: 40,
-              marginLeft: "auto",
-              marginRight: "auto",
-              justifyContent: "center",
-              alignItems: "center",
-            }}
-          >
-            <Text style={{ color: "#fff", fontSize: 24 }}>Start</Text>
+        <ScrollView style={styles.scrollView}>
+          <Text style={styles.instructionsTitle}>Instructions</Text>
+          {trashesInfo.map((item, index) => (
+            <TrashInfo key={`trashInfo-${index}`} color={item.bg} iconUrl={item.imageSource} title={item.title} description={item.description} />
+          ))}
+          <TouchableOpacity onPress={() => setShowInfo(false)} style={styles.startButton}>
+            <Text style={styles.startButtonText}>Start</Text>
           </TouchableOpacity>
         </ScrollView>
       </SafeAreaView>
     );
   }
 
+  const resetFunc = () => {
+    setChoosenTrash(null);
+    setIsGameStarted(false);
+    setStatus(null);
+    setImageUrl("");
+    setIsLoading(false);
+    setFacing("back");
+    setShowInfo(false);
+  }
+
   return (
     <SafeAreaView style={styles.container}>
-      <CameraView style={styles.camera} facing={facing}>
+      <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
         <View style={styles.overlayContainer}>
           <View style={styles.header}>
-            <TouchableOpacity
-              style={styles.circle}
-              onPress={() => router.back()}
-            >
+            <TouchableOpacity style={styles.circle} onPress={() => router.back()}>
               <ArrowIcon />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setShowInfo(true)}>
               <InfoIcon />
             </TouchableOpacity>
           </View>
-          <View
-            style={{
-              ...styles.transparentContainer,
-              backgroundColor: "blue !imporant",
-            }}
-          />
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity
-              style={styles.button}
-              onPress={toggleCameraFacing}
-            >
-              <Text style={styles.text}>Flip Camera</Text>
-            </TouchableOpacity>
+          <View style={[styles.transparentContainer, isGameStarted && styles.gameStarted]}>
+            {isGameStarted ? (
+              isLoading ? (
+                <ActivityIndicator size="large" />
+              ) : status ? status === "success" ? (
+                <View style={styles.resultContainer}>
+                  <Image source={require("../assets/images/success.png")} alt="success" style={styles.resultImage} />
+                  <Text>10+ points 🥳</Text>
+                  <Text>{message}</Text>
+                </View>
+              ) : (
+                <View style={styles.failedContainer}>
+                  <Image source={require("../assets/images/failed.png")} alt="failed" style={styles.failedImage} />
+                  <Text>{message}</Text>
+                </View>
+              ): null
+            ) : null}
+          </View>
+          <View style={isGameStarted ? styles.gameContainer : styles.buttonContainer}>
+            {isGameStarted ? (
+              choosenTrash !== null ? status !== null ?(<TouchableOpacity style={styles.trashImageContainer} onPress={resetFunc}>
+              <Text>Take the next photo</Text>
+            </TouchableOpacity>) :(
+                <TouchableOpacity style={styles.trashImageContainer} onPress={() => setIsLoading(true)}>
+                  <Image source={trashesInfo[choosenTrash].imageSource} alt={trashesInfo[choosenTrash].title} style={styles.trashImage} />
+                </TouchableOpacity>
+              ) : (
+                <ScrollView horizontal style={styles.trashScrollView}>
+                  {trashesInfo.map((item, index) => (
+                    <TouchableOpacity key={`trash-${index}`} style={styles.trashButton} onPress={() => sendDataToBackend(index)}>
+                      <Image source={item.imageSource} alt={item.title} style={styles.trashImage} />
+                    </TouchableOpacity>
+                  ))}
+                </ScrollView>
+              )
+            ) : (
+              <View style={styles.actionButtonsContainer}>
+                <TouchableOpacity style={styles.button} onPress={shootPhoto}>
+                  <Text style={styles.text}>Take a photo</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
+                  <Text style={styles.text}>Flip Camera</Text>
+                </TouchableOpacity>
+              </View>
+            )}
           </View>
         </View>
       </CameraView>
@@ -151,6 +208,46 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     backgroundColor: "#00000050",
   },
+  permissionText: {
+    textAlign: "center",
+  },
+  scrollView: {
+    flex: 1,
+    backgroundColor: "white",
+    paddingTop: 100,
+  },
+  instructionsTitle: {
+    textAlign: "center",
+    fontSize: 24,
+  },
+  startButton: {
+    width: "80%",
+    backgroundColor: "#347503",
+    borderRadius: 20,
+    borderWidth: 1,
+    borderColor: "#fff",
+    height: 40,
+    marginLeft: "auto",
+    marginRight: "auto",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  startButtonText: {
+    color: "#fff",
+    fontSize: 24,
+  },
+  camera: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  overlayContainer: {
+    flex: 1,
+    width: "100%",
+    height: "100%",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
   header: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -163,30 +260,56 @@ const styles = StyleSheet.create({
     backgroundColor: "00000020",
     color: "white",
   },
-  camera: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-  },
-  overlayContainer: {
-    flex: 1,
-    width: "100%",
-    height: "100%",
-    // backgroundColor: "#00000050",
-    justifyContent: "space-between",
-    alignItems: "center",
-  },
-
   transparentContainer: {
     width: "90%",
-    height: "80%",
+    height: "60%",
+    justifyContent: "center",
+    alignItems: "center",
     borderRadius: 12,
     opacity: 1,
   },
+  gameStarted: {
+    backgroundColor: "#fff",
+  },
+  resultContainer: {
+    flexDirection: "column",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "100%",
+    height: "100%",
+    padding: 10,
+  },
+  resultImage: {
+    width: 200,
+    height: 200,
+  },
+  failedContainer: {
+    justifyContent: "space-between",
+    alignItems: "center",
+    flexDirection: "column",
+    width: "100%",
+    height: "100%",
+    padding: 10,
+  },
+  failedImage: {
+    width: 300,
+    height: 300,
+  },
   buttonContainer: {
     flexDirection: "row",
-    height: 50,
+    height: 100,
     width: "100%",
+    justifyContent: "space-between",
+    alignItems: "center",
+  },
+  gameContainer: {
+    width: "100%",
+    height: 100,
+    flexDirection: "row",
+    alignItems: "center",
+  },
+  actionButtonsContainer: {
+    flexDirection: "row",
   },
   button: {
     flex: 1,
@@ -206,6 +329,20 @@ const styles = StyleSheet.create({
     borderColor: "#fff",
     justifyContent: "center",
     alignItems: "center",
+  },
+  trashImageContainer: {
+    marginLeft: "auto",
+    marginRight: "auto",
+  },
+  trashScrollView: {
+    maxWidth: "100%",
+  },
+  trashButton: {
+    marginHorizontal: 5,
+  },
+  trashImage: {
+    width: 70,
+    height: 70,
   },
 });
 

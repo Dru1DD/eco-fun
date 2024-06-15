@@ -1,14 +1,146 @@
+---
 openapi: 3.0.0
 info:
   title: FastAPI
-  version: 0.1.0
+  version: 0.1.2
+servers:
+- url: https://virtserver.swaggerhub.com/ANDRIIROMANTES/hackwarsaw/0.1.2
+  description: SwaggerHub API Auto Mocking
 paths:
+  /users/:
+    get:
+      tags:
+      - Users
+      summary: Test Posts
+      operationId: test_posts_users__get
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Test Posts Users  Get
+                type: array
+                items:
+                  $ref: '#/components/schemas/CreateUser'
+    post:
+      tags:
+      - Users
+      summary: Test Posts Sent
+      operationId: test_posts_sent_users__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUser'
+        required: true
+      responses:
+        "201":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                title: Response Test Posts Sent Users  Post
+                type: array
+                items:
+                  $ref: '#/components/schemas/CreateUser'
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /users/{id}:
+    get:
+      tags:
+      - Users
+      summary: Get Test One Post
+      operationId: get_test_one_post_users__id__get
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          title: Id
+          type: integer
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateUser'
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+      - Users
+      summary: Delete Test Post
+      operationId: delete_test_post_users__id__delete
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          title: Id
+          type: integer
+      responses:
+        "204":
+          description: Successful Response
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /users/posts/{id}:
+    put:
+      tags:
+      - Users
+      summary: Update Test Post
+      operationId: update_test_post_users_posts__id__put
+      parameters:
+      - name: id
+        in: path
+        required: true
+        style: simple
+        explode: false
+        schema:
+          title: Id
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /:
     get:
       summary: Root
       operationId: root__get
       responses:
-        '200':
+        "200":
           description: Successful Response
           content:
             application/json:
@@ -19,19 +151,21 @@ paths:
       description: Returns info about user and tickets to redeem
       operationId: mainScreen_mainScreen_get
       parameters:
-        - name: id
-          in: query
-          required: true
-          schema:
-            type: string
-            title: Id
+      - name: id
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          title: Id
+          type: string
       responses:
-        '200':
+        "200":
           description: Successful Response
           content:
             application/json:
               schema: {}
-        '422':
+        "422":
           description: Validation Error
           content:
             application/json:
@@ -42,6 +176,22 @@ paths:
       summary: Verifyphoto
       description: Veryfies if photo and the selected bin are matching
       operationId: verifyPhoto_verify_post
+      parameters:
+      - name: user_id
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          title: User Id
+          type: string
+      - name: binTypeGuess
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Bin'
       requestBody:
         content:
           multipart/form-data:
@@ -49,12 +199,52 @@ paths:
               $ref: '#/components/schemas/Body_verifyPhoto_verify_post'
         required: true
       responses:
-        '200':
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VerifyPhotoResult'
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /gemini:
+    post:
+      summary: Verifyphoto
+      description: Veryfies if photo and the selected bin are matching
+      operationId: verifyPhoto_gemini_post
+      parameters:
+      - name: user_id
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          title: User Id
+          type: string
+      - name: binTypeGuess
+        in: query
+        required: true
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/Bin'
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_verifyPhoto_gemini_post'
+        required: true
+      responses:
+        "200":
           description: Successful Response
           content:
             application/json:
               schema: {}
-        '422':
+        "422":
           description: Validation Error
           content:
             application/json:
@@ -63,71 +253,124 @@ paths:
 components:
   schemas:
     Bin:
+      title: Bin
       type: string
       enum:
-        - PAPER
-        - GLASS
-        - BIO
-        - METAL_PLASTIC
-        - MIXED
-      title: Bin
-    Body_verifyPhoto_verify_post:
+      - PAPER
+      - GLASS
+      - BIO
+      - METAL_PLASTIC
+      - MIXED
+    Body_verifyPhoto_gemini_post:
+      title: Body_verifyPhoto_gemini_post
+      required:
+      - photo
+      type: object
       properties:
-        params:
-          $ref: '#/components/schemas/VerifyPhoto'
         photo:
+          title: Photo
           type: string
           format: binary
-          title: Photo
-      type: object
-      required:
-        - params
-        - photo
+    Body_verifyPhoto_verify_post:
       title: Body_verifyPhoto_verify_post
+      required:
+      - file
+      type: object
+      properties:
+        file:
+          title: File
+          type: string
+          format: binary
+    CreateUser:
+      title: CreateUser
+      required:
+      - id
+      - score
+      type: object
+      properties:
+        id:
+          title: Id
+          type: string
+        score:
+          title: Score
+          type: integer
     HTTPValidationError:
+      title: HTTPValidationError
+      type: object
       properties:
         detail:
+          title: Detail
+          type: array
           items:
             $ref: '#/components/schemas/ValidationError'
-          type: array
-          title: Detail
+    User:
+      title: User
+      required:
+      - id
+      - score
       type: object
-      title: HTTPValidationError
+      properties:
+        id:
+          title: Id
+          type: string
+        score:
+          title: Score
+          type: integer
     ValidationError:
+      title: ValidationError
+      required:
+      - loc
+      - msg
+      - type
+      type: object
       properties:
         loc:
+          title: Location
+          type: array
           items:
             anyOf:
-              - type: string
-              - type: integer
-          type: array
-          title: Location
+            - type: string
+            - type: integer
         msg:
-          type: string
           title: Message
+          type: string
         type:
-          type: string
           title: Error Type
-      type: object
-      required:
-        - loc
-        - msg
-        - type
-      title: ValidationError
-    VerifyPhoto:
-      properties:
-        user_id:
           type: string
-          title: User Id
-          example: example@gmail.com
-        binTypeGuess:
-          $ref: '#/components/schemas/Bin'
-      type: object
+    VerifyPhotoPayload:
+      title: VerifyPhotoPayload
       required:
-        - user_id
-        - binTypeGuess
-      title: VerifyPhoto
-servers:
-  # Added by API Auto Mocking Plugin
-  - description: SwaggerHub API Auto Mocking
-    url: https://ecosort-d4827d1603c3.herokuapp.com
+      - correctBinType
+      - isBinTypeGuessCorrect
+      - pointsEarned
+      type: object
+      properties:
+        isBinTypeGuessCorrect:
+          title: Isbintypeguesscorrect
+          type: boolean
+        pointsEarned:
+          title: Pointsearned
+          type: integer
+          example: 2
+        correctBinType:
+          $ref: '#/components/schemas/Bin'
+        notesFromAI:
+          title: Notesfromai
+          description: If wrong there will be an explanation why
+          example: "Oh no, your guess was wrong, you should use the PAPER bin."
+          anyOf:
+          - type: string
+          - type: "null"
+    VerifyPhotoResult:
+      title: VerifyPhotoResult
+      required:
+      - payload
+      - status_code
+      type: object
+      properties:
+        status_code:
+          title: Status Code
+          type: integer
+          example: 200
+        payload:
+          $ref: '#/components/schemas/VerifyPhotoPayload'

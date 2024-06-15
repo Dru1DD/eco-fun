@@ -1,26 +1,17 @@
 import {
   Image,
   StyleSheet,
-  Button,
   Dimensions,
   View,
   Text,
-  StatusBar,
   TouchableOpacity,
 } from "react-native";
-import { Link } from "expo-router";
 import Dots from "react-native-dots-pagination";
 import { router } from "expo-router";
 
-import ParallaxScrollView from "@/components/ParallaxScrollView";
 import { DefaultApi } from "@/api";
 import { useEffect, useState } from "react";
 import Carousel from "react-native-reanimated-carousel";
-import {
-  DarkTheme,
-  DefaultTheme,
-  ThemeProvider,
-} from "@react-navigation/native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 const api = new DefaultApi();
