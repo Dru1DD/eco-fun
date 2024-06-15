@@ -1,59 +1,28 @@
-import { Tabs } from 'expo-router';
-import React from 'react';
-
-import { TabBarIcon } from '@/components/navigation/TabBarIcon';
-import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
 
 import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
-import { TouchableOpacity, StyleSheet } from 'react-native';
+import { TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 import ExplorePage from "./explore";
 import HomePage from "./home";
+import { GameIcon } from '@/components/icons/game';
+import { AchievementIcon } from '@/components/icons/achivement';
 
 const TabNavigator = () => {
 
-  // const _renderIcon = (routeName: string, selectedTab: any) => {
-  //   switch (routeName) {
-  //     case "Home":
-  //       return (
-  //         <Image
-  //           style={[
-  //             {
-  //               width: 50,
-  //               height: 50,
-  //             },
-  //             selectedTab === routeName && {
-  //               ...styles.shadow,
-  //               shadowColor: "#581E88",
-  //               shadowRadius: 4,
-  //               shadowOpacity: 1,
-  //               overflow: "hidden",
-  //             },
-  //           ]}
-  //           source={require("../assets/images/home.png")}
-  //         />
-  //       );
-  //     case "WalletStack":
-  //       return (
-  //         <Image
-  //           style={[
-  //             {
-  //               width: 80,
-  //               height: 80,
-  //             },
-  //             selectedTab === routeName && {
-  //               ...styles.shadow,
-  //               shadowColor: "#581E88",
-  //               shadowRadius: 10,
-  //               overflow: "hidden",
-  //             },
-  //           ]}
-  //           source={require("../assets/images/wallet.png")}
-  //         />
-  //       );
-  //   }
-  // };
+  const _renderIcon = (routeName: string, selectedTab: any) => {
+    switch (routeName) {
+      case "Home":
+        return (
+          <GameIcon isActive={selectedTab === routeName} />
+        );
+      case "WalletStack":
+        return (
+          <AchievementIcon isActive={selectedTab===routeName
+          }/>
+        );
+    }
+  };
 
   const renderTabBar = ({
     routeName,
@@ -71,8 +40,7 @@ const TabNavigator = () => {
         }}
         style={styles.tabbarItem}
       >
-        {/* {_renderIcon(routeName, selectedTab)} */}
-        {selectedTab}
+        {_renderIcon(routeName, selectedTab)}
       </TouchableOpacity>
     );
   };
