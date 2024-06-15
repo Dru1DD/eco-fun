@@ -86,6 +86,7 @@ function CameraPage() {
     try {
       const result = await cameraRef.current.takePictureAsync({ base64: true, quality: 0 });
       if (!result) throw new Error("Something went wrong");
+      console.log(result.base64)
       setImageUrl(result.base64);
       setIsGameStarted(true);
     } catch (e) {
@@ -98,9 +99,12 @@ function CameraPage() {
       setIsLoading(true);
       setChoosenTrash(index);
       let imageBytes = Buffer.from(imageUrl, "base64");
+    
+      let imageBlob = new Blob([imageBytes]);
       const result = await api.verifyPhotoVerifyPost("asdsadas", trashesInfo[index].color as any, imageBytes).catch(e => console.log("Error", e.message));
 
       // if(!result) throw new Error("Something went wrong");
+      
 
       console.log("Result", result);
       setStatus(result.data.payload.isBinTypeGuessCorrect ? "success" : "failed");
@@ -140,7 +144,7 @@ function CameraPage() {
 
   return (
     <SafeAreaView style={styles.container}>
-      <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
+      <CameraView style={styles.camera} facing={facing} ref={cameraRef} pictureSize="640x480">
         <View style={styles.overlayContainer}>
           <View style={styles.header}>
             <TouchableOpacity style={styles.circle} onPress={() => router.back()}>
