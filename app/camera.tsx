@@ -84,7 +84,7 @@ function CameraPage() {
   const shootPhoto = async () => {
     if (!cameraRef.current) return null;
     try {
-      const result = await cameraRef.current.takePictureAsync({ base64: true, quality: 0 });
+      const result = await cameraRef.current.takePictureAsync({ base64: true, quality: 0, scale: 0.5 });
       if (!result) throw new Error("Something went wrong");
       console.log(result.base64)
       setImageUrl(result.base64);
