@@ -7,8 +7,11 @@ import ExplorePage from "./explore";
 import HomePage from "./home";
 import { GameIcon } from '@/components/icons/game';
 import { AchievementIcon } from '@/components/icons/achivement';
+import { CameraIcon } from '@/components/icons/camera';
+import { useRouter } from 'expo-router';
 
 const TabNavigator = () => {
+  const router = useRouter();
 
   const _renderIcon = (routeName: string, selectedTab: any) => {
     switch (routeName) {
@@ -66,8 +69,9 @@ const TabNavigator = () => {
       renderCircle={({ selectedTab, navigate, routeName }) => (
         <TouchableOpacity
           style={[styles.btnCircle]}
+          onPress={() => router.replace("camera")}
         >
-         Home Page
+          <CameraIcon />
         </TouchableOpacity>
       )}
     >
@@ -86,8 +90,6 @@ const TabNavigator = () => {
 }
 
 export default function TabLayout() {
-  const colorScheme = useColorScheme();
-
   return (
    <TabNavigator/>
   );

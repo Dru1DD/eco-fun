@@ -31,9 +31,7 @@ export default function HomeScreen() {
           style={styles.reactLogo}
         />
       }>
-        <Link href={"/home"} style={{
-            color: "#FFF"
-        }}>Go To Tabs</Link>
+        <Link href={"/home"} >Go To Tabs</Link>
     </ParallaxScrollView>
   );
 }
