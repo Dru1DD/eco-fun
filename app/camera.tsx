@@ -210,20 +210,19 @@ function CameraPage() {
             </TouchableOpacity>
           </View>
           <View
-            style={[
-              styles.transparentContainer,
-              status && styles.gameStarted,
-            ]}
+            style={[styles.transparentContainer, status && styles.gameStarted]}
           >
-            { isGameStarted && !status && imageUrl && <Image 
-              source={{ uri: `data:image/png;base64,${imageUrl}` }}
-              style={{
-                borderRadius: 20,
-                position: "absolute",
-                width: "100%",
-                height: "100%"
-              }}
-            />}
+            {isGameStarted && !status && imageUrl && (
+              <Image
+                source={{ uri: `data:image/png;base64,${imageUrl}` }}
+                style={{
+                  borderRadius: 20,
+                  position: "absolute",
+                  width: "100%",
+                  height: "100%",
+                }}
+              />
+            )}
             {isGameStarted ? (
               isLoading ? (
                 <ActivityIndicator size="large" />
@@ -254,7 +253,7 @@ function CameraPage() {
                       </Text>
                       <Text
                         style={{
-                          fontSize: 32,
+                          fontSize: 22,
                           fontWeight: "bold",
                           textAlign: "center",
                         }}
@@ -272,7 +271,7 @@ function CameraPage() {
                     />
                     <Text
                       style={{
-                        fontSize: 32,
+                        fontSize: 22,
                         fontWeight: "bold",
                         textAlign: "center",
                       }}
@@ -411,7 +410,7 @@ const styles = StyleSheet.create({
     width: "90%",
     height: "60%",
     justifyContent: "center",
-    alignItems: "center", 
+    alignItems: "center",
     opacity: 1,
     borderRadius: 30,
     borderColor: "green",
@@ -440,11 +439,14 @@ const styles = StyleSheet.create({
     width: "100%",
     height: "100%",
     borderRadius: 20,
+    marginLeft: "auto",
+    marginRight: "auto",
     padding: 10,
   },
   failedImage: {
     width: 300,
     height: 300,
+    resizeMode: "contain",
   },
   buttonContainer: {
     flexDirection: "row",
