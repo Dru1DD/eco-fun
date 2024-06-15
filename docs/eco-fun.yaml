@@ -1,0 +1,133 @@
+openapi: 3.0.0
+info:
+  title: FastAPI
+  version: 0.1.0
+paths:
+  /:
+    get:
+      summary: Root
+      operationId: root__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+  /mainScreen:
+    get:
+      summary: Mainscreen
+      description: Returns info about user and tickets to redeem
+      operationId: mainScreen_mainScreen_get
+      parameters:
+        - name: id
+          in: query
+          required: true
+          schema:
+            type: string
+            title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /verify:
+    post:
+      summary: Verifyphoto
+      description: Veryfies if photo and the selected bin are matching
+      operationId: verifyPhoto_verify_post
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_verifyPhoto_verify_post'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Bin:
+      type: string
+      enum:
+        - PAPER
+        - GLASS
+        - BIO
+        - METAL_PLASTIC
+        - MIXED
+      title: Bin
+    Body_verifyPhoto_verify_post:
+      properties:
+        params:
+          $ref: '#/components/schemas/VerifyPhoto'
+        photo:
+          type: string
+          format: binary
+          title: Photo
+      type: object
+      required:
+        - params
+        - photo
+      title: Body_verifyPhoto_verify_post
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+    VerifyPhoto:
+      properties:
+        user_id:
+          type: string
+          title: User Id
+          example: example@gmail.com
+        binTypeGuess:
+          $ref: '#/components/schemas/Bin'
+      type: object
+      required:
+        - user_id
+        - binTypeGuess
+      title: VerifyPhoto
+servers:
+  # Added by API Auto Mocking Plugin
+  - description: SwaggerHub API Auto Mocking
+    url: https://ecosort-d4827d1603c3.herokuapp.com

@@ -2,8 +2,26 @@ import { Image, StyleSheet, Button } from 'react-native';
 import { Link } from 'expo-router';
 
 import ParallaxScrollView from '@/components/ParallaxScrollView';
+import { DefaultApi } from '@/api';
+import { useEffect } from 'react';
 
-export default function HomeScreen() { 
+const api = new DefaultApi();
+
+export default function HomeScreen() {
+    // example usage of API
+    useEffect(() => {
+      console.log("HomeScreen mounted");
+      api
+        .mainScreenMainScreenGet("0")
+        .then((response) => {
+          console.log("API RESPONSE:");
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    }, []);
+
   return (
     <ParallaxScrollView
       headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
