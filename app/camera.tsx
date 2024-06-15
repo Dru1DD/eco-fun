@@ -1,12 +1,22 @@
 import { CameraView, useCameraPermissions } from "expo-camera";
-import { SafeAreaView, ScrollView, Image, StatusBar, ActivityIndicator, StyleSheet, Text, TouchableOpacity, View, Button } from "react-native";
+import {
+  SafeAreaView,
+  ScrollView,
+  Image,
+  StatusBar,
+  ActivityIndicator,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+  Button,
+} from "react-native";
 import { useRef, useState } from "react";
 import { useRouter } from "expo-router";
 import ArrowIcon from "@/components/icons/arrow";
 import InfoIcon from "@/components/icons/info";
 import TrashInfo from "@/components/trash-info";
 import { Buffer } from "buffer";
-
 
 import { DefaultApi } from "@/api";
 
@@ -17,27 +27,43 @@ const trashesInfo = [
     bg: "#F3EA004D",
     color: "METAL_PLASTIC",
     title: "Plastics & Metal",
-    description: ["Plastic bottles", "Metal beverage and food cans", "Plastic food containers"],
+    description: [
+      "Plastic bottles",
+      "Metal beverage and food cans",
+      "Plastic food containers",
+    ],
     imageSource: require("../assets/images/trash/orange.png"),
   },
   {
     color: "GLASS",
     title: "Glass",
-    description: ["Glass bottles and jars", "Broken glass items", "Glass cosmetic bottles"],
+    description: [
+      "Glass bottles and jars",
+      "Broken glass items",
+      "Glass cosmetic bottles",
+    ],
     bg: "#3E8F024D",
     imageSource: require("../assets/images/trash/green.png"),
   },
   {
     color: "PAPER",
     title: "Paper and Cardboard",
-    description: ["Vegetable and fruit scraps", "Coffee grounds and tea bags", "Bread and cereal leftovers"],
+    description: [
+      "Vegetable and fruit scraps",
+      "Coffee grounds and tea bags",
+      "Bread and cereal leftovers",
+    ],
     bg: "#385DDE4D",
     imageSource: require("../assets/images/trash/purple.png"),
   },
   {
     color: "BIO",
     title: "Organic Waste",
-    description: ["Vegetable and fruit scraps", "Coffee grounds and tea bags", "Bread and cereal leftovers"],
+    description: [
+      "Vegetable and fruit scraps",
+      "Coffee grounds and tea bags",
+      "Bread and cereal leftovers",
+    ],
     bg: "#8146004D",
     imageSource: require("../assets/images/trash/red.png"),
   },
@@ -71,7 +97,9 @@ function CameraPage() {
   if (!permission.granted) {
     return (
       <SafeAreaView style={styles.container}>
-        <Text style={styles.permissionText}>We need your permission to show the camera</Text>
+        <Text style={styles.permissionText}>
+          We need your permission to show the camera
+        </Text>
         <Button onPress={requestPermission} title="grant permission" />
       </SafeAreaView>
     );
@@ -84,9 +112,13 @@ function CameraPage() {
   const shootPhoto = async () => {
     if (!cameraRef.current) return null;
     try {
-      const result = await cameraRef.current.takePictureAsync({ base64: true, quality: 0, scale: 0.5 });
+      const result = await cameraRef.current.takePictureAsync({
+        base64: true,
+        quality: 0,
+        scale: 0.5,
+      });
       if (!result) throw new Error("Something went wrong");
-      
+
       setImageUrl(result.base64);
       setIsGameStarted(true);
     } catch (e) {
@@ -99,19 +131,27 @@ function CameraPage() {
       setIsLoading(true);
       setChoosenTrash(index);
 
-      const result = await api.verifyPhotoVerifyPost({user_id: "asdsadas", binTypeGuess: trashesInfo[index].color as any, file: imageUrl}).catch(e => console.log("Error", e.message));
+      const result = await api
+        .verifyPhotoVerifyPost({
+          user_id: "asdsadas",
+          binTypeGuess: trashesInfo[index].color as any,
+          file: imageUrl,
+        })
+        .catch((e) => console.log("Error", e.message));
 
-      if(!result) throw new Error("Something went wrong");
+      if (!result) throw new Error("Something went wrong");
 
-      console.log("Result", result.data.payload)
-      
-      setStatus(result.data.payload.isBinTypeGuessCorrect ? "success" : "failed");
+      console.log("Result", result.data.payload);
+
+      setStatus(
+        result.data.payload.isBinTypeGuessCorrect ? "success" : "failed"
+      );
       setMessage(result.data.payload.notesFromAI as string);
       setIsLoading(false);
     } catch (e) {
       console.log(e);
     }
-  }
+  };
 
   if (showInfo) {
     return (
@@ -120,9 +160,18 @@ function CameraPage() {
         <ScrollView style={styles.scrollView}>
           <Text style={styles.instructionsTitle}>Instructions</Text>
           {trashesInfo.map((item, index) => (
-            <TrashInfo key={`trashInfo-${index}`} color={item.bg} iconUrl={item.imageSource} title={item.title} description={item.description} />
+            <TrashInfo
+              key={`trashInfo-${index}`}
+              color={item.bg}
+              iconUrl={item.imageSource}
+              title={item.title}
+              description={item.description}
+            />
           ))}
-          <TouchableOpacity onPress={() => setShowInfo(false)} style={styles.startButton}>
+          <TouchableOpacity
+            onPress={() => setShowInfo(false)}
+            style={styles.startButton}
+          >
             <Text style={styles.startButtonText}>Start</Text>
           </TouchableOpacity>
         </ScrollView>
@@ -138,53 +187,135 @@ function CameraPage() {
     setIsLoading(false);
     setFacing("back");
     setShowInfo(false);
-  }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
-      <CameraView style={styles.camera} facing={facing} ref={cameraRef} pictureSize="640x480">
+      <CameraView
+        style={styles.camera}
+        facing={facing}
+        ref={cameraRef}
+        pictureSize="640x480"
+      >
         <View style={styles.overlayContainer}>
           <View style={styles.header}>
-            <TouchableOpacity style={styles.circle} onPress={() => router.push("/")}>
+            <TouchableOpacity
+              style={styles.circle}
+              onPress={() => router.push("/")}
+            >
               <ArrowIcon />
             </TouchableOpacity>
             <TouchableOpacity onPress={() => setShowInfo(true)}>
               <InfoIcon />
             </TouchableOpacity>
           </View>
-          <View style={[styles.transparentContainer, isGameStarted && styles.gameStarted]}>
+          <View
+            style={[
+              styles.transparentContainer,
+              isGameStarted && styles.gameStarted,
+            ]}
+          >
             {isGameStarted ? (
               isLoading ? (
                 <ActivityIndicator size="large" />
-              ) : status ? status === "success" ? (
-                <View style={styles.resultContainer}>
-                  <Image source={require("../assets/images/success.png")} alt="success" style={styles.resultImage} />
-                  <View style={{ flexDirection: "column", alignSelf: "center", justifyContent: "flex-start", flex: 1 }}>
-                    <Text style={{ fontSize: 32, fontWeight: "bold", textAlign: "center"}}>10+ points 🥳</Text>
-                  <Text style={{ fontSize: 32, fontWeight: "bold", textAlign: "center"}}>{message}</Text>
+              ) : status ? (
+                status === "success" ? (
+                  <View style={styles.resultContainer}>
+                    <Image
+                      source={require("../assets/images/success.png")}
+                      alt="success"
+                      style={styles.resultImage}
+                    />
+                    <View
+                      style={{
+                        flexDirection: "column",
+                        alignSelf: "center",
+                        justifyContent: "flex-start",
+                        flex: 1,
+                      }}
+                    >
+                      <Text
+                        style={{
+                          fontSize: 32,
+                          fontWeight: "bold",
+                          textAlign: "center",
+                        }}
+                      >
+                        10+ points 🥳
+                      </Text>
+                      <Text
+                        style={{
+                          fontSize: 32,
+                          fontWeight: "bold",
+                          textAlign: "center",
+                        }}
+                      >
+                        {message}
+                      </Text>
+                    </View>
                   </View>
-                </View>
-              ) : (
-                <View style={styles.failedContainer}>
-                  <Image source={require("../assets/images/failed.png")} alt="failed" style={styles.failedImage} />
-                  <Text style={{ fontSize: 32, fontWeight: "bold", textAlign: "center"}}>{message}</Text>
-                </View>
-              ): null
+                ) : (
+                  <View style={styles.failedContainer}>
+                    <Image
+                      source={require("../assets/images/failed.png")}
+                      alt="failed"
+                      style={styles.failedImage}
+                    />
+                    <Text
+                      style={{
+                        fontSize: 32,
+                        fontWeight: "bold",
+                        textAlign: "center",
+                      }}
+                    >
+                      {message}
+                    </Text>
+                  </View>
+                )
+              ) : null
             ) : null}
           </View>
-          <View style={isGameStarted ? styles.gameContainer : styles.buttonContainer}>
+          <View
+            style={
+              isGameStarted ? styles.gameContainer : styles.buttonContainer
+            }
+          >
             {isGameStarted ? (
-              choosenTrash !== null ? status !== null ?(<TouchableOpacity style={[styles.trashImageContainer, styles.button]} onPress={resetFunc}>
-              <Text style={{color: "#fff", fontSize: 20}}>Take the next photo</Text>
-            </TouchableOpacity>) :(
-                <TouchableOpacity style={styles.trashImageContainer} onPress={() => setIsLoading(true)}>
-                  <Image source={trashesInfo[choosenTrash].imageSource} alt={trashesInfo[choosenTrash].title} style={styles.trashImage} />
-                </TouchableOpacity>
+              choosenTrash !== null ? (
+                status !== null ? (
+                  <TouchableOpacity
+                    style={[styles.trashImageContainer, styles.button]}
+                    onPress={resetFunc}
+                  >
+                    <Text style={{ color: "#fff", fontSize: 20 }}>
+                      Take the next photo
+                    </Text>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    style={styles.trashImageContainer}
+                    onPress={() => setIsLoading(true)}
+                  >
+                    <Image
+                      source={trashesInfo[choosenTrash].imageSource}
+                      alt={trashesInfo[choosenTrash].title}
+                      style={styles.trashImage}
+                    />
+                  </TouchableOpacity>
+                )
               ) : (
                 <ScrollView horizontal style={styles.trashScrollView}>
                   {trashesInfo.map((item, index) => (
-                    <TouchableOpacity key={`trash-${index}`} style={styles.trashButton} onPress={() => sendDataToBackend(index)}>
-                      <Image source={item.imageSource} alt={item.title} style={styles.trashImage} />
+                    <TouchableOpacity
+                      key={`trash-${index}`}
+                      style={styles.trashButton}
+                      onPress={() => sendDataToBackend(index)}
+                    >
+                      <Image
+                        source={item.imageSource}
+                        alt={item.title}
+                        style={styles.trashImage}
+                      />
                     </TouchableOpacity>
                   ))}
                 </ScrollView>
@@ -192,9 +323,12 @@ function CameraPage() {
             ) : (
               <View style={styles.actionButtonsContainer}>
                 <TouchableOpacity style={styles.button} onPress={shootPhoto}>
-                 <Text style={styles.text}>Take a photo</Text>
+                  <Text style={styles.text}>Take a photo</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={[styles.button, { marginLeft: 5}]} onPress={toggleCameraFacing}>
+                <TouchableOpacity
+                  style={[styles.button, { marginLeft: 5 }]}
+                  onPress={toggleCameraFacing}
+                >
                   <Text style={styles.text}>Flip Camera</Text>
                 </TouchableOpacity>
               </View>
@@ -273,8 +407,10 @@ const styles = StyleSheet.create({
     opacity: 1,
   },
   gameStarted: {
-    backgroundColor: "#fff",
-    borderRadius: 20
+    backgroundColor: "transparent",
+    borderRadius: 30,
+    borderColor: "green",
+    borderWidth: 10,
   },
   resultContainer: {
     flexDirection: "column",
@@ -319,7 +455,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 5,
     flexDirection: "row",
     maxWidth: "100%",
-    justifyContent: "space-between"
+    justifyContent: "space-between",
   },
   button: {
     flex: 1,
@@ -330,7 +466,7 @@ const styles = StyleSheet.create({
     color: "white",
     maxWidth: "100%",
     borderRadius: 20,
-    height: 50
+    height: 50,
   },
   text: {
     fontSize: 24,
@@ -349,7 +485,7 @@ const styles = StyleSheet.create({
   trashImageContainer: {
     marginLeft: "auto",
     marginRight: "auto",
-    marginBottom: 10
+    marginBottom: 10,
   },
   trashScrollView: {
     maxWidth: "100%",

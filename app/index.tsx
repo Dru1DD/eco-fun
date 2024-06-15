@@ -33,7 +33,7 @@ export default function HomeScreen() {
   }, []);
 
   const onContinueWithDevicePressed = () => {
-    router.replace("home");
+    router.replace("marketplace");
   };
 
   const data = [

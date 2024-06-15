@@ -4,7 +4,7 @@ import { CurvedBottomBarExpo } from "react-native-curved-bottom-bar";
 import { TouchableOpacity, StyleSheet, Image } from 'react-native';
 
 import GamePage from "./game";
-import MartkeplacePage from "./martketplace";
+import MartkeplacePage from "./marketplace";
 import { GameIcon } from '@/components/icons/game';
 import { AchievementIcon } from '@/components/icons/achivement';
 import { CameraIcon } from '@/components/icons/camera';

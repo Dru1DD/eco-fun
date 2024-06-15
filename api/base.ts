@@ -19,7 +19,7 @@ import type { Configuration } from './configuration';
 import type { AxiosPromise, AxiosInstance, RawAxiosRequestConfig } from 'axios';
 import globalAxios from 'axios';
 
-export const BASE_PATH = "https://virtserver.swaggerhub.com/ANDRIIROMANTES/hackwarsaw/0.1.3".replace(/\/+$/, "");
+export const BASE_PATH = "https://ecosort-d4827d1603c3.herokuapp.com".replace(/\/+$/, "");
 
 /**
  *
