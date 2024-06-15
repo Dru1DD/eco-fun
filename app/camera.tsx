@@ -86,7 +86,7 @@ function CameraPage() {
     try {
       const result = await cameraRef.current.takePictureAsync({ base64: true, quality: 0, scale: 0.5 });
       if (!result) throw new Error("Something went wrong");
-      console.log(result.base64)
+      
       setImageUrl(result.base64);
       setIsGameStarted(true);
     } catch (e) {
@@ -98,17 +98,15 @@ function CameraPage() {
     try {
       setIsLoading(true);
       setChoosenTrash(index);
-      let imageBytes = Buffer.from(imageUrl, "base64");
-    
-      let imageBlob = new Blob([imageBytes]);
-      const result = await api.verifyPhotoVerifyPost("asdsadas", trashesInfo[index].color as any, imageBytes).catch(e => console.log("Error", e.message));
 
-      // if(!result) throw new Error("Something went wrong");
+      const result = await api.verifyPhotoVerifyPost({user_id: "asdsadas", binTypeGuess: trashesInfo[index].color as any, file: imageUrl}).catch(e => console.log("Error", e.message));
+
+      if(!result) throw new Error("Something went wrong");
+
+      console.log("Result", result.data.payload)
       
-
-      console.log("Result", result);
       setStatus(result.data.payload.isBinTypeGuessCorrect ? "success" : "failed");
-      setMessage(result.data.payload.notesFromAI);
+      setMessage(result.data.payload.notesFromAI as string);
       setIsLoading(false);
     } catch (e) {
       console.log(e);
