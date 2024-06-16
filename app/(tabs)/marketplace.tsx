@@ -92,6 +92,19 @@ export default function HomeScreen() {
     <View
       style={[styles.itemContainer, index === 0 ? styles.itemContainerAD : []]}
     >
+      {index === 0 && (<Image
+        source={require("../../assets/images/exclusive.png")}
+        style={{
+          position: "absolute",
+          top: 0,
+          right: 0,
+          width: 120,
+          height: 120,
+          resizeMode: "contain",
+          zIndex: 999,
+        }}
+      />) || null}
+      
       <Image source={{ uri: item.image }} style={styles.image} />
       <Text style={styles.title}>{item.title}</Text>
       <Text style={styles.description}>{item.description}</Text>
