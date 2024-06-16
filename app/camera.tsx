@@ -210,9 +210,16 @@ function CameraPage() {
             </TouchableOpacity>
           </View>
           <View
-            style={[styles.transparentContainer, status && styles.gameStarted, status === "failed" && { 
-              borderColor: "red"
-            }]}
+            style={[
+              styles.transparentContainer,
+              status && styles.gameStarted,
+              status === "failed" && {
+                borderColor: "red",
+              },
+              status === "success" && {
+                borderColor: "green",
+              },
+            ]}
           >
             {isGameStarted && !status && imageUrl && (
               <Image
@@ -415,7 +422,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     opacity: 1,
     borderRadius: 30,
-    borderColor: "green",
+    borderColor: "rgba(255, 255, 255, 0.5)",
     borderWidth: 10,
   },
   gameStarted: {
@@ -449,7 +456,7 @@ const styles = StyleSheet.create({
     width: 300,
     height: 300,
     resizeMode: "contain",
-    marginLeft: -10
+    marginLeft: -25,
   },
   buttonContainer: {
     flexDirection: "row",
