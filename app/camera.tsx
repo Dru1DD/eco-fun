@@ -331,7 +331,11 @@ function CameraPage() {
                 )
               ) : (
                 <View style={styles.trashViewContainer}>
-                  <Text>Make a choice</Text>
+                  <Text
+                    style={{ alignSelf: "center", fontSize: 20, marginTop: 8 }}
+                  >
+                    Make a choice
+                  </Text>
                   <View
                     style={{
                       flexDirection: "row",
@@ -530,15 +534,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: "rgba(255, 255, 255, 0.70)",
     maxWidth: "100%",
-    height: 290,
+    height: 220,
   },
   trashButton: {
     marginHorizontal: 0,
   },
   trashImage: {
     width: 70,
-    height: 180,
-    marginBottom: 30,
+    height: 140,
+    marginBottom: 0,
     resizeMode: "contain",
   },
 });
