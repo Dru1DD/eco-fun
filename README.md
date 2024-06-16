@@ -2,6 +2,9 @@
 
 Eco Fun - this is an innovative mobile application that teaches children how to sort waste in a playful way. The app offers interactive games, quizzes and the ability to use the camera to identify the correct waste container. The main mascot character, Laura, a friendly squirrel, accompanies children on their environmental journey, making learning fun and exciting.
 
+Demo Video Link 👀👨‍💻📱:
+https://youtube.com/shorts/P8XtMF8sVk8?feature=share
+
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
 ## Get started
