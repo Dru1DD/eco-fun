@@ -28,3 +28,12 @@ In the output, you'll find options to open the app in a
 - [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
 - [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
 
+
+## Technologies and packages:
+- React Native
+- Expo
+- Expo Camera
+-  React Native Curved Bottom Bar
+-   Swagger
+  </br> etc.  
+
