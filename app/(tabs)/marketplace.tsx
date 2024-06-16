@@ -7,46 +7,72 @@ import {
   View,
   FlatList,
   Modal,
+  ActivityIndicator,
 } from "react-native";
 
 import { SafeAreaView } from "react-native-safe-area-context";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { router } from "expo-router";
+import { DefaultApi } from "@/api";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+
+const api = new DefaultApi();
 
 export default function HomeScreen() {
   const [selectedItem, setSelectedItem] = useState<any>(null);
-  const pointsAmount = 100;
-  const data = [
-    {
-      title: "Copernikus",
-      description: "The museum you need to visit",
-      image:
-        "https://go2warsaw.pl/wp-content/uploads/centrum-nauki-kopernik-fot-iwona-gmyrek.jpg",
-      price: 0,
-    },
-    {
-      title: "Warsaw Zoo",
-      description:
-        "The zoo you need to visit in near future d to visit in near future in Warsaw town",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/b/b9/Miejski_Ogrod_Zoologiczny_w_Warszawie_-_Ptaszarnia.JPG",
-      price: 50,
-    },
-    {
-      title: "Copernikus",
-      description: "The museum you need to visit",
-      image:
-        "https://go2warsaw.pl/wp-content/uploads/centrum-nauki-kopernik-fot-iwona-gmyrek.jpg",
-      price: 200,
-    },
-    {
-      title: "Warsaw Zoo",
-      description: "The zoo you need to visit",
-      image:
-        "https://upload.wikimedia.org/wikipedia/commons/b/b9/Miejski_Ogrod_Zoologiczny_w_Warszawie_-_Ptaszarnia.JPG",
-      price: 50,
-    },
-  ];
+  const [isLoading, setIsLoading] = useState(true);
+  const [data, setData] = useState<any[]>([]);
+  const [pointsAmount, setPointsAmount] = useState(0);
+  // const data = [
+  //   {
+  //     title: "Copernikus",
+  //     description: "The museum you need to visit",
+  //     image:
+  //       "https://go2warsaw.pl/wp-content/uploads/centrum-nauki-kopernik-fot-iwona-gmyrek.jpg",
+  //     price: 0,
+  //   },
+  //   {
+  //     title: "Warsaw Zoo",
+  //     description:
+  //       "The zoo you need to visit in near future d to visit in near future in Warsaw town",
+  //     image:
+  //       "https://upload.wikimedia.org/wikipedia/commons/b/b9/Miejski_Ogrod_Zoologiczny_w_Warszawie_-_Ptaszarnia.JPG",
+  //     price: 50,
+  //   },
+  //   {
+  //     title: "Copernikus",
+  //     description: "The museum you need to visit",
+  //     image:
+  //       "https://go2warsaw.pl/wp-content/uploads/centrum-nauki-kopernik-fot-iwona-gmyrek.jpg",
+  //     price: 200,
+  //   },
+  //   {
+  //     title: "Warsaw Zoo",
+  //     description: "The zoo you need to visit",
+  //     image:
+  //       "https://upload.wikimedia.org/wikipedia/commons/b/b9/Miejski_Ogrod_Zoologiczny_w_Warszawie_-_Ptaszarnia.JPG",
+  //     price: 50,
+  //   },
+  // ];
+
+  useEffect(() => {
+    console.log("HomeScreen mounted");
+    AsyncStorage.getItem("deviceId").then((deviceId) => {
+      api
+        .mainScreenMainScreenGet(deviceId as string)
+        .then((response) => {
+          console.log("API RESPONSE:");
+          console.log(response.data);
+          setIsLoading(false);
+          response.data?.marketplaces && setData(response.data.marketplaces);
+          response.data?.pointsAmount &&
+            setPointsAmount(response.data.pointsAmount);
+        })
+        .catch((error) => {
+          console.error(error);
+        });
+    });
+  }, [isLoading]);
 
   const onClickProfile = () => {
     router.push("profile");
@@ -54,9 +80,13 @@ export default function HomeScreen() {
 
   const onClickRedeem = (item) => {
     console.log("Redeem item", item);
-    // todo request
-    // if success
-    setSelectedItem(item);
+    setIsLoading(true);
+    AsyncStorage.getItem("deviceId").then((deviceId) => {
+      api.claimTicketClaimPost(deviceId as string, item.id).then((response) => {
+        setIsLoading(false);
+        setSelectedItem(item);
+      });
+    });
   };
   const renderItem = ({ item, index }) => (
     <View
@@ -92,6 +122,13 @@ export default function HomeScreen() {
 
   return (
     <SafeAreaView>
+      {isLoading ? (
+        <Modal visible={isLoading} transparent={true}>
+          <View style={styles.modalContainer}>
+            <ActivityIndicator size="large" color="green" />
+          </View>
+        </Modal>
+      ) : null}
       <View style={styles.topBarContainer}>
         <View
           style={{
@@ -124,7 +161,7 @@ export default function HomeScreen() {
             }}
             source={require("../../assets/images/diamond_icon.png")}
           />
-          <Text style={styles.pointsAmount}>100</Text>
+          <Text style={styles.pointsAmount}>{pointsAmount}</Text>
         </View>
 
         <TouchableOpacity onPress={() => onClickProfile()}>
@@ -200,7 +237,7 @@ const styles = StyleSheet.create({
     backgroundColor: "#FFFFFF",
   },
   itemContainerAD: {
-    backgroundColor: "#f5e998",
+    backgroundColor: "#faf3c5",
   },
   image: {
     width: "100%",

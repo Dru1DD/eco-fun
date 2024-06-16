@@ -17,6 +17,7 @@ const TrashInfo = ({ color, iconUrl, description, title }: Props) => {
           style={{
             width: 100,
             height: 100,
+            resizeMode: "contain",
           }}
         />
       </View>

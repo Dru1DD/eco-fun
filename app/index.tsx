@@ -17,7 +17,6 @@ import { useEffect, useState } from "react";
 import Carousel from "react-native-reanimated-carousel";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-const api = new DefaultApi();
 
 export default function HomeScreen() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -25,15 +24,15 @@ export default function HomeScreen() {
   // example usage of API
   useEffect(() => {
     console.log("HomeScreen mounted");
-    api
-      .mainScreenMainScreenGet("0")
-      .then((response) => {
-        console.log("API RESPONSE:");
-        console.log(response.data);
-      })
-      .catch((error) => {
-        console.error(error);
-      });
+    // api
+    //   .mainScreenMainScreenGet("0")
+    //   .then((response) => {
+    //     console.log("API RESPONSE:");
+    //     console.log(response.data);
+    //   })
+    //   .catch((error) => {
+    //     console.error(error);
+    //   });
     AsyncStorage.getItem("deviceId").then((deviceId) => {
       if (deviceId) {
         console.log("Device ID found", deviceId);

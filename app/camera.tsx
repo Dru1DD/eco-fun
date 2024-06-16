@@ -17,6 +17,7 @@ import ArrowIcon from "@/components/icons/arrow";
 import InfoIcon from "@/components/icons/info";
 import TrashInfo from "@/components/trash-info";
 import { Buffer } from "buffer";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { DefaultApi } from "@/api";
 
@@ -32,7 +33,8 @@ const trashesInfo = [
       "Metal beverage and food cans",
       "Plastic food containers",
     ],
-    imageSource: require("../assets/images/trash/orange.png"),
+    imageSource: require("../assets/images/trash/yellow.png"),
+    imageLabelSource: require("../assets/images/trash/yellow_label.png"),
   },
   {
     color: "GLASS",
@@ -44,17 +46,19 @@ const trashesInfo = [
     ],
     bg: "#3E8F024D",
     imageSource: require("../assets/images/trash/green.png"),
+    imageLabelSource: require("../assets/images/trash/green_label.png"),
   },
   {
     color: "PAPER",
     title: "Paper and Cardboard",
     description: [
-      "Vegetable and fruit scraps",
-      "Coffee grounds and tea bags",
-      "Bread and cereal leftovers",
+      "Newspapers and magazines",
+      "Paper bags",
+      "Office paper and drafts",
     ],
     bg: "#385DDE4D",
     imageSource: require("../assets/images/trash/blue.png"),
+    imageLabelSource: require("../assets/images/trash/blue_label.png"),
   },
   {
     color: "BIO",
@@ -65,14 +69,16 @@ const trashesInfo = [
       "Bread and cereal leftovers",
     ],
     bg: "#8146004D",
-    imageSource: require("../assets/images/trash/red.png"),
+    imageSource: require("../assets/images/trash/brown.png"),
+    imageLabelSource: require("../assets/images/trash/brown_label.png"),
   },
   {
     color: "MIXED",
     title: "Other waste",
-    description: [],
+    description: ["All other remaining waste", "Household appliances"],
     bg: "#5C5C5C4D",
     imageSource: require("../assets/images/trash/grey.png"),
+    imageLabelSource: require("../assets/images/trash/grey_label.png"),
   },
 ];
 
@@ -131,23 +137,25 @@ function CameraPage() {
       setIsLoading(true);
       setChoosenTrash(index);
 
-      const result = await api
-        .verifyPhotoVerifyPost({
-          user_id: "asdsadas",
-          binTypeGuess: trashesInfo[index].color as any,
-          file: imageUrl,
-        })
-        .catch((e) => console.log("Error", e.message));
+      AsyncStorage.getItem("deviceId").then((deviceId) => {
+        const result = api
+          .verifyPhotoVerifyPost({
+            user_id: deviceId as string,
+            binTypeGuess: trashesInfo[index].color as any,
+            file: imageUrl,
+          })
+          .then((result) => {
+            if (!result) throw new Error("Something went wrong");
+            console.log("Result", result.data.payload);
 
-      if (!result) throw new Error("Something went wrong");
-
-      console.log("Result", result.data.payload);
-
-      setStatus(
-        result.data.payload.isBinTypeGuessCorrect ? "success" : "failed"
-      );
-      setMessage(result.data.payload.notesFromAI as string);
-      setIsLoading(false);
+            setStatus(
+              result.data.payload.isBinTypeGuessCorrect ? "success" : "failed"
+            );
+            setMessage(result.data.payload.notesFromAI as string);
+            setIsLoading(false);
+          })
+          .catch((e) => console.log("Error", e.message));
+      });
     } catch (e) {
       console.log(e);
     }
@@ -191,6 +199,7 @@ function CameraPage() {
 
   return (
     <SafeAreaView style={styles.container}>
+      <StatusBar backgroundColor={"transparent"} barStyle={"dark-content"} />
       <CameraView
         style={styles.camera}
         facing={facing}
@@ -314,28 +323,38 @@ function CameraPage() {
                     onPress={() => setIsLoading(true)}
                   >
                     <Image
-                      source={trashesInfo[choosenTrash].imageSource}
+                      source={trashesInfo[choosenTrash].imageLabelSource}
                       alt={trashesInfo[choosenTrash].title}
                       style={styles.trashImage}
                     />
                   </TouchableOpacity>
                 )
               ) : (
-                <ScrollView horizontal style={styles.trashScrollView}>
-                  {trashesInfo.map((item, index) => (
-                    <TouchableOpacity
-                      key={`trash-${index}`}
-                      style={styles.trashButton}
-                      onPress={() => sendDataToBackend(index)}
-                    >
-                      <Image
-                        source={item.imageSource}
-                        alt={item.title}
-                        style={styles.trashImage}
-                      />
-                    </TouchableOpacity>
-                  ))}
-                </ScrollView>
+                <View style={styles.trashViewContainer}>
+                  <Text>Make a choice</Text>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      flex: 1,
+                      justifyContent: "space-around",
+                      height: "100%",
+                    }}
+                  >
+                    {trashesInfo.map((item, index) => (
+                      <TouchableOpacity
+                        key={`trash-${index}`}
+                        style={styles.trashButton}
+                        onPress={() => sendDataToBackend(index)}
+                      >
+                        <Image
+                          source={item.imageLabelSource}
+                          alt={item.title}
+                          style={styles.trashImage}
+                        />
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
               )
             ) : (
               <View style={styles.actionButtonsContainer}>
@@ -381,7 +400,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     borderWidth: 1,
     borderColor: "#fff",
-    height: 40,
+    height: 50,
     marginLeft: "auto",
     marginRight: "auto",
     justifyContent: "center",
@@ -507,15 +526,20 @@ const styles = StyleSheet.create({
     marginRight: "auto",
     marginBottom: 10,
   },
-  trashScrollView: {
+  trashViewContainer: {
+    flex: 1,
+    backgroundColor: "rgba(255, 255, 255, 0.70)",
     maxWidth: "100%",
+    height: 290,
   },
   trashButton: {
-    marginHorizontal: 5,
+    marginHorizontal: 0,
   },
   trashImage: {
     width: 70,
-    height: 70,
+    height: 180,
+    marginBottom: 30,
+    resizeMode: "contain",
   },
 });
 

@@ -1,14 +1,14 @@
 openapi: 3.0.0
 info:
   title: FastAPI
-  version: 0.1.3
+  version: 0.1.5
 paths:
   /users/:
     get:
       tags:
         - Users
-      summary: Test Posts
-      operationId: test_posts_users__get
+      summary: Get Users
+      operationId: get_users_users__get
       responses:
         '200':
           description: Successful Response
@@ -18,12 +18,12 @@ paths:
                 items:
                   $ref: '#/components/schemas/CreateUser'
                 type: array
-                title: Response Test Posts Users  Get
+                title: Response Get Users Users  Get
     post:
       tags:
         - Users
-      summary: Test Posts Sent
-      operationId: test_posts_sent_users__post
+      summary: Create User
+      operationId: create_user_users__post
       requestBody:
         content:
           application/json:
@@ -39,7 +39,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/CreateUser'
                 type: array
-                title: Response Test Posts Sent Users  Post
+                title: Response Create User Users  Post
         '422':
           description: Validation Error
           content:
@@ -50,14 +50,14 @@ paths:
     get:
       tags:
         - Users
-      summary: Get Test One Post
-      operationId: get_test_one_post_users__id__get
+      summary: Get User By Id
+      operationId: get_user_by_id_users__id__get
       parameters:
         - name: id
           in: path
           required: true
           schema:
-            type: integer
+            type: string
             title: Id
       responses:
         '200':
@@ -75,14 +75,14 @@ paths:
     delete:
       tags:
         - Users
-      summary: Delete Test Post
-      operationId: delete_test_post_users__id__delete
+      summary: Delete User
+      operationId: delete_user_users__id__delete
       parameters:
         - name: id
           in: path
           required: true
           schema:
-            type: integer
+            type: string
             title: Id
       responses:
         '204':
@@ -93,18 +93,17 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-  /users/posts/{id}:
     put:
       tags:
         - Users
-      summary: Update Test Post
-      operationId: update_test_post_users_posts__id__put
+      summary: Update User
+      operationId: update_user_users__id__put
       parameters:
         - name: id
           in: path
           required: true
           schema:
-            type: integer
+            type: string
             title: Id
       requestBody:
         required: true
@@ -125,6 +124,127 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /marketplaces/:
+    get:
+      tags:
+        - Marketplaces
+      summary: Get Marketplaces
+      operationId: get_marketplaces_marketplaces__get
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CreateMarketplace'
+                type: array
+                title: Response Get Marketplaces Marketplaces  Get
+    post:
+      tags:
+        - Marketplaces
+      summary: Create Marketplace
+      operationId: create_marketplace_marketplaces__post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateMarketplace'
+        required: true
+      responses:
+        '201':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/CreateMarketplace'
+                type: array
+                title: Response Create Marketplace Marketplaces  Post
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /marketplaces/{id}:
+    get:
+      tags:
+        - Marketplaces
+      summary: Get Marketplace By Id
+      operationId: get_marketplace_by_id_marketplaces__id__get
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CreateMarketplace'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    delete:
+      tags:
+        - Marketplaces
+      summary: Delete Marketplace
+      operationId: delete_marketplace_marketplaces__id__delete
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+      responses:
+        '204':
+          description: Successful Response
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+    put:
+      tags:
+        - Marketplaces
+      summary: Update Marketplace
+      operationId: update_marketplace_marketplaces__id__put
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+            title: Id
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Marketplace'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Marketplace'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /:
     get:
       summary: Root
@@ -135,6 +255,36 @@ paths:
           content:
             application/json:
               schema: {}
+  /claim:
+    post:
+      summary: Claimticket
+      description: Claims a ticket
+      operationId: claimTicket_claim_post
+      parameters:
+        - name: user_id
+          in: query
+          required: true
+          schema:
+            type: string
+            title: User Id
+        - name: mplace_id
+          in: query
+          required: true
+          schema:
+            type: integer
+            title: Mplace Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /mainScreen:
     get:
       summary: Mainscreen
@@ -152,7 +302,8 @@ paths:
           description: Successful Response
           content:
             application/json:
-              schema: {}
+              schema:
+                $ref: '#/components/schemas/MainScreen'
         '422':
           description: Validation Error
           content:
@@ -183,41 +334,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
-  /gemini:
-    post:
-      summary: Verifyphoto
-      description: Veryfies if photo and the selected bin are matching
-      operationId: verifyPhoto_gemini_post
-      parameters:
-        - name: user_id
-          in: query
-          required: true
-          schema:
-            type: string
-            title: User Id
-        - name: binTypeGuess
-          in: query
-          required: true
-          schema:
-            $ref: '#/components/schemas/Bin'
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/Body_verifyPhoto_gemini_post'
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            application/json:
-              schema: {}
-        '422':
-          description: Validation Error
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/HTTPValidationError'
 components:
   schemas:
     Bin:
@@ -229,16 +345,31 @@ components:
         - METAL_PLASTIC
         - MIXED
       title: Bin
-    Body_verifyPhoto_gemini_post:
+    CreateMarketplace:
       properties:
-        photo:
+        id:
+          type: integer
+          title: Id
+        image:
           type: string
-          format: binary
-          title: Photo
+          title: Image
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        price:
+          type: integer
+          title: Price
       type: object
       required:
-        - photo
-      title: Body_verifyPhoto_gemini_post
+        - id
+        - image
+        - title
+        - description
+        - price
+      title: CreateMarketplace
     CreateUser:
       properties:
         id:
@@ -261,6 +392,57 @@ components:
           title: Detail
       type: object
       title: HTTPValidationError
+    MainScreen:
+      properties:
+        id:
+          type: string
+          title: Id
+          example: example@gmail.com
+        marketplaces:
+          items: {}
+          type: array
+          title: Marketplaces
+          example:
+            - description: Description
+              id: 1
+              image: https://example.com/image.jpg
+              price: 100
+              title: Title
+        pointsAmount:
+          type: integer
+          title: Pointsamount
+          example: 1005
+      type: object
+      required:
+        - id
+        - marketplaces
+        - pointsAmount
+      title: MainScreen
+    Marketplace:
+      properties:
+        id:
+          type: integer
+          title: Id
+        image:
+          type: string
+          title: Image
+        title:
+          type: string
+          title: Title
+        description:
+          type: string
+          title: Description
+        price:
+          type: integer
+          title: Price
+      type: object
+      required:
+        - id
+        - image
+        - title
+        - description
+        - price
+      title: Marketplace
     User:
       properties:
         id:
@@ -341,12 +523,12 @@ components:
         status_code:
           type: integer
           title: Status Code
+          default: 200
           example: 200
         payload:
           $ref: '#/components/schemas/VerifyPhotoPayload'
       type: object
       required:
-        - status_code
         - payload
       title: VerifyPhotoResult
 servers:
