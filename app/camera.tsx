@@ -248,7 +248,7 @@ function CameraPage() {
                 status === "success" ? (
                   <View style={styles.resultContainer}>
                     <Image
-                      source={require("../assets/images/success.png")}
+                      source={require("../assets/images/guess_correct.png")}
                       alt="success"
                       style={styles.resultImage}
                     />
@@ -267,7 +267,7 @@ function CameraPage() {
                           textAlign: "center",
                         }}
                       >
-                        10+ points 🥳
+                        +10 points 🥳
                       </Text>
                       <Text
                         style={{
@@ -461,6 +461,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   resultImage: {
+    marginTop: 20,
     width: 200,
     height: 200,
   },
