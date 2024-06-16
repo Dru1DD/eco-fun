@@ -38,6 +38,7 @@ export default function HomeScreen() {
       if (deviceId) {
         console.log("Device ID found", deviceId);
         // router.replace("marketplace");
+        setIsLoaded(true);
       } else {
         console.log("Device ID found", deviceId);
         setIsLoaded(true);

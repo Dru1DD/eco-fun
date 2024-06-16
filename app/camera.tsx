@@ -201,7 +201,7 @@ function CameraPage() {
           <View style={styles.header}>
             <TouchableOpacity
               style={styles.circle}
-              onPress={() => router.push("/game")}
+              onPress={() => router.replace("/marketplace")}
             >
               <ArrowIcon />
             </TouchableOpacity>
